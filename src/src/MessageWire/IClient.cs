@@ -17,6 +17,7 @@ namespace MessageWire
         event EventHandler<ProtocolFailureEventArgs> EcryptionProtocolFailed;
         event EventHandler<MessageEventArgs> InvalidMessageReceived;
         event EventHandler<MessageEventArgs> MessageReceived;
+        event EventHandler<MessageEventArgs> HeartbeatReceived;
 
         bool SecureConnection(bool blockUntilComplete = true, int timeoutMs = 500);
         void Send(List<byte[]> frames);

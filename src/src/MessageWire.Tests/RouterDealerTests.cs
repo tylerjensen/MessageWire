@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using MessageWire;
 using System.Text;
-using Xunit;
 using System.Threading;
+using Xunit;
 
 namespace MessageWire.Tests
 {
@@ -226,7 +226,7 @@ namespace MessageWire.Tests
 
                     Assert.True(count < 200, "Test took too long.");
                     var serverKeys = server.GetCurrentSessionKeys();
-                    Assert.Equal(1, serverKeys.Length);
+                    Assert.Single(serverKeys);
                     var session = server.GetSession(serverKeys[0]);
                     Assert.NotNull(session);
                     Assert.True("testid" == session.ClientIdentity, "Client identity does not match.");

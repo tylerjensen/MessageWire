@@ -7,6 +7,7 @@ namespace MessageWire
     public interface IHost : IDisposable
     {
         event EventHandler<MessageEventArgs> MessageReceived;
+        event EventHandler<MessageEventArgs> ReceivedHeartbeatEvent;
         event EventHandler<MessageEventFailureArgs> MessageSentFailure;
         event EventHandler<MessageEventArgs> ZkClientSessionEstablishedEvent;
 

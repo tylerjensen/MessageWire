@@ -184,6 +184,7 @@ namespace MessageWire
         public int HeartBeatsReceivedCount { get; private set; }
 
         private EventHandler<MessageEventArgs> _receivedEvent;
+        private EventHandler<MessageEventArgs> _receivedHeartbeatEvent;
         private EventHandler<MessageEventArgs> _invalidReceivedEvent;
         private EventHandler<EventArgs> _ecryptionProtocolEstablishedEvent;
         private EventHandler<ProtocolFailureEventArgs> _ecryptionProtocolFailedEvent;
@@ -199,6 +200,20 @@ namespace MessageWire
             }
             remove {
                 _receivedEvent -= value;
+            }
+        }
+
+        /// <summary>
+        /// This event occurs when an a heartbeat response message has been received. 
+        /// </summary>
+        /// <remarks>This handler is thread safe occuring on a thread other 
+        /// than the thread sending and receiving messages over the wire.</remarks>
+        public event EventHandler<MessageEventArgs> HeartbeatReceived {
+            add {
+                _receivedHeartbeatEvent += value;
+            }
+            remove {
+                _receivedHeartbeatEvent -= value;
             }
         }
 
@@ -374,8 +389,7 @@ namespace MessageWire
             {
                 if (frames[0].IsEqualTo(MessageHeader.HeartBeat))
                 {
-                    HeartBeatsReceivedCount++;
-                    _session?.RecordHeartBeat();
+                    ProcessHeartBeatResponse(frames);
                 }
                 else if (_throwOnSend && null != _session && null == _session.Crypto)
                 {
@@ -393,6 +407,20 @@ namespace MessageWire
                     ProcessRegularMessage(frames);
                 }
             }
+        }
+
+        private void ProcessHeartBeatResponse(List<byte[]> frames)
+        {
+            HeartBeatsReceivedCount++;
+            _session?.RecordHeartBeat();
+            _receivedHeartbeatEvent?.Invoke(this, new MessageEventArgs
+            {
+                Message = new Message
+                {
+                    ClientId = _clientId,
+                    Frames = frames
+                }
+            });
         }
 
         private void ProcessRegularMessage(List<byte[]> frames)

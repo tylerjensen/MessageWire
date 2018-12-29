@@ -63,7 +63,7 @@ namespace MessageWire.SecureRemote
         {
             var list = new List<byte[]>();
             list.Add(MessageHeader.InitiationRequest);
-            using (var rsa = RSA.Create())
+            using (var rsa = new RSACryptoServiceProvider())
             {
                 _clientPublicPrivateKey = rsa.ExportParameters(true);
                 _clientPublicKey = rsa.ExportParameters(false);
@@ -87,7 +87,7 @@ namespace MessageWire.SecureRemote
 
             var list = new List<byte[]>();
             list.Add(MessageHeader.HandshakeRequest);
-            using (var rsa = RSA.Create())
+            using (var rsa = new RSACryptoServiceProvider())
             {
                 rsa.ImportParameters(_serverPublicKey);
                 list.Add(rsa.Encrypt(Encoding.UTF8.GetBytes(identity), RSAEncryptionPadding.Pkcs1));
@@ -108,7 +108,7 @@ namespace MessageWire.SecureRemote
 
             byte[] salt = null;
             byte[] bServerEphemeral = null;
-            using (var rsa = RSA.Create())
+            using (var rsa = new RSACryptoServiceProvider())
             {
                 rsa.ImportParameters(_clientPublicPrivateKey);
                 salt = rsa.Decrypt(handshakeResponseFrames[1], RSAEncryptionPadding.Pkcs1);
@@ -133,7 +133,7 @@ namespace MessageWire.SecureRemote
 
             var list = new List<byte[]>();
             list.Add(MessageHeader.ProofRequest);
-            using (var rsa = RSA.Create())
+            using (var rsa = new RSACryptoServiceProvider())
             {
                 rsa.ImportParameters(_serverPublicKey);
                 list.Add(rsa.Encrypt(_clientSessionHash, RSAEncryptionPadding.Pkcs1));
@@ -151,7 +151,7 @@ namespace MessageWire.SecureRemote
             }
 
             byte[] serverSessionHash = null;
-            using (var rsa = RSA.Create())
+            using (var rsa = new RSACryptoServiceProvider())
             {
                 rsa.ImportParameters(_clientPublicPrivateKey);
                 serverSessionHash = rsa.Decrypt(proofResponseFrames[1], RSAEncryptionPadding.Pkcs1);

@@ -70,14 +70,14 @@ namespace MessageWire
                 var parts = paramString.Split(',');
                 if (parts.Length != 8) return default(RSAParameters);
                 var result = new RSAParameters();
-                result.D = null != parts[0] ? Convert.FromBase64String(parts[0]) : null;
-                result.DP = null != parts[1] ? Convert.FromBase64String(parts[1]) : null;
-                result.DQ = null != parts[2] ? Convert.FromBase64String(parts[2]) : null;
-                result.Exponent = null != parts[3] ? Convert.FromBase64String(parts[3]) : null;
-                result.InverseQ = null != parts[4] ? Convert.FromBase64String(parts[4]) : null;
-                result.Modulus = null != parts[5] ? Convert.FromBase64String(parts[5]) : null;
-                result.P = null != parts[6] ? Convert.FromBase64String(parts[6]) : null;
-                result.Q = null != parts[7] ? Convert.FromBase64String(parts[7]) : null;
+                result.D = string.Empty != parts[0] ? Convert.FromBase64String(parts[0]) : null;
+                result.DP = string.Empty != parts[1] ? Convert.FromBase64String(parts[1]) : null;
+                result.DQ = string.Empty != parts[2] ? Convert.FromBase64String(parts[2]) : null;
+                result.Exponent = string.Empty != parts[3] ? Convert.FromBase64String(parts[3]) : null;
+                result.InverseQ = string.Empty != parts[4] ? Convert.FromBase64String(parts[4]) : null;
+                result.Modulus = string.Empty != parts[5] ? Convert.FromBase64String(parts[5]) : null;
+                result.P = string.Empty != parts[6] ? Convert.FromBase64String(parts[6]) : null;
+                result.Q = string.Empty != parts[7] ? Convert.FromBase64String(parts[7]) : null;
                 return result;
             }
             catch

@@ -105,7 +105,7 @@ namespace MessageWire
 
         private EventHandler<MessageEventFailureArgs> _sentFailureEvent;
         private EventHandler<MessageEventArgs> _receivedEvent;
-        private EventHandler<MessageEventArgs> _sentEvent;
+        private EventHandler<MessageEventArgs> _receivedHeartbeatEvent;
         private EventHandler<MessageEventArgs> _zkClientSessionEstablishedEvent;
 
         public Guid[] GetCurrentSessionKeys()
@@ -140,6 +140,20 @@ namespace MessageWire
             }
             remove {
                 _receivedEvent -= value;
+            }
+        }
+
+        /// <summary>
+        /// This event occurs when a heartbeat message has been received from a client.
+        /// </summary>
+        /// <remarks>This handler will run on a different thread than the socket poller and
+        /// blocking on this thread will not block sending and receiving.</remarks>
+        public event EventHandler<MessageEventArgs> ReceivedHeartbeatEvent {
+            add {
+                _receivedHeartbeatEvent += value;
+            }
+            remove {
+                _receivedHeartbeatEvent -= value;
             }
         }
 
@@ -349,6 +363,10 @@ namespace MessageWire
                 heartBeatResponse.Append(MessageHeader.HeartBeat);
                 _sendQueue.Enqueue(heartBeatResponse);
                 _logger.Info("Heartbeat received from {0} and response sent.", session.ClientId);
+                _receivedHeartbeatEvent?.Invoke(this, new MessageEventArgs
+                {
+                    Message = message
+                });
             }
         }
 

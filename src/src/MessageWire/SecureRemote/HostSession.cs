@@ -112,7 +112,7 @@ namespace MessageWire.SecureRemote
             else
             {
                 _clientPublicKey = frames[1].ToRSAParameters();
-                using (var rsa = RSA.Create())
+                using (var rsa = new RSACryptoServiceProvider())
                 {
                     _serverPublicPrivateKey = rsa.ExportParameters(true);
                     _serverPublicKey = rsa.ExportParameters(false);
@@ -137,7 +137,7 @@ namespace MessageWire.SecureRemote
             }
             else
             {
-                using (var rsa = RSA.Create())
+                using (var rsa = new RSACryptoServiceProvider())
                 {
                     rsa.ImportParameters(_serverPublicPrivateKey);
                     _identity = Encoding.UTF8.GetString(rsa.Decrypt(frames[1], RSAEncryptionPadding.Pkcs1));
@@ -164,7 +164,7 @@ namespace MessageWire.SecureRemote
                         _clientEphemeralA, _serverEphemeralB, _scramble);
 
                     list.Add(MessageHeader.HandshakeResponseSuccess);
-                    using (var rsa = RSA.Create())
+                    using (var rsa = new RSACryptoServiceProvider())
                     {
                         rsa.ImportParameters(_clientPublicKey);
                         list.Add(rsa.Encrypt(_identityHash.Salt, RSAEncryptionPadding.Pkcs1));
@@ -183,7 +183,7 @@ namespace MessageWire.SecureRemote
 
             byte[] clientSessionHash = frames[1];
 
-            using (var rsa = RSA.Create())
+            using (var rsa = new RSACryptoServiceProvider())
             {
                 rsa.ImportParameters(_serverPublicPrivateKey);
                 clientSessionHash = rsa.Decrypt(frames[1], RSAEncryptionPadding.Pkcs1);
@@ -206,7 +206,7 @@ namespace MessageWire.SecureRemote
                 _zkCrypto = new Crypto(_serverSessionKey, _scramble, _logger);
 
                 list.Add(MessageHeader.ProofResponseSuccess);
-                using (var rsa = RSA.Create())
+                using (var rsa = new RSACryptoServiceProvider())
                 {
                     rsa.ImportParameters(_clientPublicKey);
                     list.Add(rsa.Encrypt(serverSessionHash, RSAEncryptionPadding.Pkcs1));
